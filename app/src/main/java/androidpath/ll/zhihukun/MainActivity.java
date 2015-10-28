@@ -24,19 +24,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar mToolbar;
     @Bind(R.id.navigation_drawer)
     NavigationView mDrawer;
+    @Bind(R.id.list)
+    RecyclerView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         setUpLayout();
 
-        RecyclerView list = (RecyclerView) findViewById(R.id.list);
         SimpleAdapter adapter = new SimpleAdapter(list);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
     private void setUpLayout() {
@@ -58,4 +59,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.v(TAG, menuItem.getTitle().toString());
         return true;
     }
+
 }
