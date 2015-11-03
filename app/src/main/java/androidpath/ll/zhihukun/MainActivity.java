@@ -11,8 +11,21 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.squareup.okhttp.OkHttpClient;
+
+import java.util.List;
+
+import androidpath.ll.zhihukun.adapters.SimpleAdapter;
+import androidpath.ll.zhihukun.interfaces.ZhihuService;
+import androidpath.ll.zhihukun.models.Stories;
+import androidpath.ll.zhihukun.models.Story;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
@@ -37,6 +50,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SimpleAdapter adapter = new SimpleAdapter(list);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this));
+
+        //request feeds, set them into adapter.
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://news-at.zhihu.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ZhihuService mZhihuService = retrofit.create(ZhihuService.class);
+        Call<Stories> stories = mZhihuService.listStories();
+        stories.enqueue(new Callback<Stories>() {
+            @Override
+            public void onResponse(Response<Stories> response, Retrofit retrofit) {
+                List<Story> list = response.body().getStories();
+                for (Story s : list) {
+                    Log.v(TAG, s.toString());
+                }
+            }
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
 
     }
 
