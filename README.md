@@ -4,5 +4,5 @@ A custom client that just started to be built with [zhihu-API](https://github.co
 I am going to 
 apply some of the components
 * Android.support.design
-* RxJava style
-* Retrofit 2.0
+* [RxJava style](https://github.com/ReactiveX/RxJava)
+* [Retrofit 2.0](http://square.github.io/retrofit/)
