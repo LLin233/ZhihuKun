@@ -11,11 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import java.util.List;
 
-import androidpath.ll.zhihukun.adapters.SimpleAdapter;
+import androidpath.ll.zhihukun.adapters.StoryAdapter;
 import androidpath.ll.zhihukun.interfaces.ZhihuService;
 import androidpath.ll.zhihukun.models.Stories;
 import androidpath.ll.zhihukun.models.Story;
@@ -29,8 +27,9 @@ import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
-
     private ActionBarDrawerToggle mDrawerToggle;
+    private StoryAdapter storyAdapter;
+
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @Bind(R.id.toolbar)
@@ -47,15 +46,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         setUpLayout();
 
-        SimpleAdapter adapter = new SimpleAdapter(list);
-        list.setAdapter(adapter);
-        list.setLayoutManager(new LinearLayoutManager(this));
+//        SimpleAdapter adapter = new SimpleAdapter(list);
+//        list.setAdapter(adapter);
+//        list.setLayoutManager(new LinearLayoutManager(this));
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        list .setLayoutManager(linearLayoutManager);
+        storyAdapter  = new StoryAdapter(this);
 
         //request feeds, set them into adapter.
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://news-at.zhihu.com")
+                .baseUrl(Constants.BASE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         ZhihuService mZhihuService = retrofit.create(ZhihuService.class);
         Call<Stories> stories = mZhihuService.listStories();
         stories.enqueue(new Callback<Stories>() {
@@ -65,12 +69,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 for (Story s : list) {
                     Log.v(TAG, s.toString());
                 }
+                storyAdapter.updateItems(list.size());
+                storyAdapter.setDataSet(list);
+                Log.v(TAG, "Size: " + list.size() );
             }
+
             @Override
             public void onFailure(Throwable t) {
 
             }
         });
+        list.setAdapter(storyAdapter);
+
+
+
+
 
     }
 
