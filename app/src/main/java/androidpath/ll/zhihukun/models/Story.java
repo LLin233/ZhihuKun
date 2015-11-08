@@ -1,7 +1,5 @@
 package androidpath.ll.zhihukun.models;
 
-import java.util.List;
-
 /**
  * Created by Le on 2015/10/26.
  */
@@ -30,6 +28,10 @@ public class Story {
     private String title;
     private String id;
     private String[] images;
+
+    public String getTitle() {
+        return title;
+    }
 
     @Override
     public String toString() {
