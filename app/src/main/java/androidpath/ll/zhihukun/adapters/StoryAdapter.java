@@ -9,6 +9,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import androidpath.ll.zhihukun.R;
@@ -23,18 +25,18 @@ import butterknife.ButterKnife;
 public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
-    private Context context;
+    private Context mContext;
     private int lastAnimatedPosition = -1;
     private int itemsCount = 0;
     private List<Story> mStories;
 
     public StoryAdapter(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.list_item_story, parent, false);
+        final View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_story, parent, false);
         return new CellFeedViewHolder(view);
     }
 
@@ -45,7 +47,7 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (position > lastAnimatedPosition) {
             lastAnimatedPosition = position;
-            view.setTranslationY(Utils.getScreenHeight(context));
+            view.setTranslationY(Utils.getScreenHeight(mContext));
             view.animate()
                     .translationY(0)
                     .setInterpolator(new DecelerateInterpolator(3.f))
@@ -59,6 +61,9 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         runEnterAnimation(viewHolder.itemView, position);
         CellFeedViewHolder holder = (CellFeedViewHolder) viewHolder;
         holder.storyTitle.setText(mStories.get(position).getTitle());
+        Picasso.with(mContext)
+                .load(mStories.get(position).getImages())
+                .into(holder.storyImage);
     }
 
     @Override

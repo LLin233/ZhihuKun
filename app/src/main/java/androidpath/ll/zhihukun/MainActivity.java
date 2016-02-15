@@ -11,19 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import java.util.List;
-
 import androidpath.ll.zhihukun.adapters.StoryAdapter;
-import androidpath.ll.zhihukun.interfaces.ZhihuService;
-import androidpath.ll.zhihukun.models.Stories;
+import androidpath.ll.zhihukun.models.APIManager;
 import androidpath.ll.zhihukun.models.Story;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
@@ -46,44 +38,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         setUpLayout();
 
-//        SimpleAdapter adapter = new SimpleAdapter(list);
-//        list.setAdapter(adapter);
-//        list.setLayoutManager(new LinearLayoutManager(this));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        list .setLayoutManager(linearLayoutManager);
-        storyAdapter  = new StoryAdapter(this);
+        list.setLayoutManager(linearLayoutManager);
+        storyAdapter = new StoryAdapter(this);
 
-        //request feeds, set them into adapter.
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ZhihuService mZhihuService = retrofit.create(ZhihuService.class);
-        Call<Stories> stories = mZhihuService.listStories();
-        stories.enqueue(new Callback<Stories>() {
-            @Override
-            public void onResponse(Response<Stories> response, Retrofit retrofit) {
-                List<Story> list = response.body().getStories();
-                for (Story s : list) {
-                    Log.v(TAG, s.toString());
-                }
-                storyAdapter.updateItems(list.size());
-                storyAdapter.setDataSet(list);
-                Log.v(TAG, "Size: " + list.size() );
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
+        APIManager mAPIManager = new APIManager();
+        mAPIManager.getStoriesList()
+                .subscribe(list -> {
+                    storyAdapter.updateItems(list.size());
+                    storyAdapter.setDataSet(list);
+                    for (Story item : list) {
+                        Log.v(TAG, item.toString());
+                    }
+                });
         list.setAdapter(storyAdapter);
-
-
-
-
 
     }
 
