@@ -1,6 +1,7 @@
 package androidpath.ll.zhihukun;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,7 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidpath.ll.zhihukun.adapters.StoryAdapter;
 import androidpath.ll.zhihukun.models.APIManager;
@@ -19,6 +22,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = getClass().getSimpleName();
+    private boolean mIsExit;
     private ActionBarDrawerToggle mDrawerToggle;
     private StoryAdapter storyAdapter;
 
@@ -75,5 +79,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.v(TAG, menuItem.getTitle().toString());
         return true;
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mIsExit) {
+                this.finish();
+            } else {
+                Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+                mIsExit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIsExit = false;
+                    }
+                }, 2000);
+            }
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 }
