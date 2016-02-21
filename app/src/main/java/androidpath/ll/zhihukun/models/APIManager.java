@@ -34,4 +34,11 @@ public class APIManager {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<List<Story>> getStoriesListBefore(String date) {
+        return mAPIService.getStoriesBefore(date)
+                .map(Stories::getStories)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io());
+    }
+
 }
